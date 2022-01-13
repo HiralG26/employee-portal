@@ -5,54 +5,64 @@ import Home from './Component/Home';
 import About from './Component/About';
 import Contact from './Component/Contact';
 import EmployeeDetail from './Component/EmployeeDetail';
-import {Nav, Navbar, Container} from 'react-bootstrap';
+import { Nav, Navbar, Container } from 'react-bootstrap';
 import EmployeeForm from './Component/EmployeeForm';
 import { loadEmployees } from './actions/action-creators';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+//amplify packages 
+import { Amplify } from 'aws-amplify';
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
+import awsEXports from './aws-exports';
+Amplify.configure(awsEXports);
 
-function App({loadEmployees}) {
+
+function App({ loadEmployees }) {
   loadEmployees();
-  
+
   return (
-    <Router>
-      {/* <div className="App">
-      <Link to="/" > Home </Link>
-      <Link to="/about" > About </Link>
-      <Link to="/contact" > Contact </Link>
-      </div> */}
-      <Navbar bg="dark" variant="dark">
-        <Container>
-          <Navbar.Brand href="#home">{process.env.REACT_APP_APPLICATION_NAME}</Navbar.Brand>
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/">Home</Nav.Link>
-            <Nav.Link as={Link} to="/about">About</Nav.Link>
-            <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
-          </Nav>
-        </Container>
-      </Navbar>
+    <Authenticator loginMechanisms={['username']}>
+      {({ signOut, user }) => (
+        <Router>
+          <Navbar bg="dark" variant="dark">
+            <Container>
+              <Navbar.Brand href="#home">{process.env.REACT_APP_APPLICATION_NAME}</Navbar.Brand>
+              <Nav className="me-auto">
+                <Nav.Link as={Link} to="/">Home</Nav.Link>
+                <Nav.Link as={Link} to="/about">About</Nav.Link>
+                <Nav.Link as={Link} to="/contact">Contact</Nav.Link>
+                <Nav.Link onClick={signOut}>SignOut</Nav.Link>
+                <Nav.Link href="#">Welcome {user.username}</Nav.Link>
 
-      <div id="pagecontainer">
-        <Routes>
-          <Route exact path="/" element={<Home />}> </Route>
-          <Route exact path="/about" element={<About />}> </Route>
-          <Route exact path="/contact" element={<Contact />}> </Route>
-          <Route exact path="/employees/location/:LocationID/empCode/:empCode" element={<EmployeeDetail />}> </Route>
-          <Route exact path="/employees/create" element={<EmployeeForm />}> </Route>
 
-        </Routes>
-      </div>
-    </Router>
+              </Nav>
+            </Container>
+          </Navbar>
+
+          <div id="pagecontainer">
+            <Routes>
+              <Route exact path="/" element={<Home />}> </Route>
+              <Route exact path="/about" element={<About />}> </Route>
+              <Route exact path="/contact" element={<Contact />}> </Route>
+              <Route exact path="/employees/location/:LocationID/empCode/:empCode" element={<EmployeeDetail />}> </Route>
+              <Route exact path="/employees/create" element={<EmployeeForm />}> </Route>
+
+            </Routes>
+          </div>
+        </Router>
+      )}
+    </Authenticator>
 
   );
 }
 
-function mapDispatchToProps(dispatch){
-  let actionMap={
+function mapDispatchToProps(dispatch) {
+  let actionMap = {
     loadEmployees
   }
-  return bindActionCreators(actionMap,dispatch);
+  return bindActionCreators(actionMap, dispatch);
 }
 
-export default connect(null,mapDispatchToProps) (App);
+export default connect(null, mapDispatchToProps)(App);
