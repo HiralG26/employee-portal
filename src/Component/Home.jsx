@@ -62,7 +62,7 @@ class Home extends Component {
                 <Container>
                     <Row>
                         <Col>
-                            <h2> Home</h2>
+                            <h2> Employee List</h2>
                             {/* with props */}
                             {/* <SearchBar doSearch= {this.handleSearch}/>
                         <EmployeeList data={this.state.filteredResult}/> */}
